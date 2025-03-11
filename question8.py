@@ -5,7 +5,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 
-# Function to download a page
+
 def download_page(url):
     try:
         response = requests.get(url, timeout=10)
@@ -15,7 +15,7 @@ def download_page(url):
         print(f"Failed to download {url}: {e}")
         return None
 
-# Function to extract all links from a page
+
 def extract_links(html, base_url):
     soup = BeautifulSoup(html, 'html.parser')
     links = set()
@@ -37,12 +37,12 @@ def download_link(url):
             file.write(content)
         print(f"Downloaded {url}")
 
-# Multi-threaded download using ThreadPoolExecutor
+# ThreadPoolExecutor
 def download_links_threadpool(urls):
     with ThreadPoolExecutor(max_workers=5) as executor:
         executor.map(download_link, urls)
 
-# Multi-process download using ProcessPoolExecutor
+# ProcessPoolExecutor
 def download_links_processpool(urls):
     with ProcessPoolExecutor(max_workers=5) as executor:
         executor.map(download_link, urls)
@@ -65,7 +65,7 @@ async def download_links_async(urls):
         tasks = [async_download_link(session, url) for url in urls]
         await asyncio.gather(*tasks)
 
-# Main function
+
 def main():
     url = "https://knowledge.hubspot.com/files/copy-and-update-the-url-of-files-uploaded-to-the-file-manager"  # Change this to the target URL
     html = download_page(url)
@@ -76,9 +76,9 @@ def main():
     links = extract_links(html, url)
     print(f"Found {len(links)} links.")
     
-    # Uncomment one of the methods below to use:
+    
     # download_links_threadpool(links)
-    # download_links_processpool(links)
+     download_links_processpool(links)
     asyncio.run(download_links_async(links))
 
 if __name__ == "__main__":
