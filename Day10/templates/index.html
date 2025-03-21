@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot with Flask and LangChain</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .chat-history {
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+        .chat-message.user {
+            text-align: right;
+            color: #007bff;
+        }
+        .chat-message.bot {
+            text-align: left;
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2 class="text-center">Chatbot</h2>
+        <div class="chat-history" id="chat-history">
+            {% for entry in history %}
+                <div class="chat-message user">{{ entry.query }}</div>
+                <div class="chat-message bot">{{ entry.response }}</div>
+            {% endfor %}
+        </div>
+        <form id="chat-form">
+            <div class="form-group">
+                <input type="text" class="form-control" id="query" name="query" placeholder="Enter your query">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Send</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#chat-form").on("submit", function(e) {
+                e.preventDefault();
+                var query = $("#query").val();
+                $.post("/ask", { query: query }, function(data) {
+                    var history = data.history;
+                    $("#chat-history").empty();
+                    history.forEach(function(entry) {
+                        $("#chat-history").append('<div class="chat-message user">' + entry.query + '</div>');
+                        $("#chat-history").append('<div class="chat-message bot">' + entry.response + '</div>');
+                    });
+                    $("#query").val("");
+                });
+            });
+        });
+    </script>
+</body>
+</html>
